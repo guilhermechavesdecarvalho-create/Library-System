@@ -3,48 +3,28 @@ package br.biblioteca.senac.biblioteca.service;
 import br.biblioteca.senac.biblioteca.dao.LivroDao;
 import br.biblioteca.senac.biblioteca.model.Livro;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class LivroService {
 
     private LivroDao livroDao;
 
-    public LivroService() {
-        this.livroDao = new livroDao();
+    public LivroService(LivroDao livroDao) {
+        this.livroDao = livroDao;
     }
-
-    public void cadastrarLivro(Livro livro) throws SQLException, IllegalArgumentException {
+    
+    public void cadastrarLivro(Livro livro) {
         validarLivro(livro);
 
         if (livroDao.buscarPorIsbn(livro.getIsbn()) != null) {
             throw new IllegalArgumentException("Já existe um livro cadastrado com este ISBN.");
         }
 
-        livroDao.inserir(livro);
-    }
-
-    public void atualizarLivro(Livro livro) throws SQLException, IllegalArgumentException {
-        if (livro.getId() == null || livro.getId() <= 0) {
-            throw new IllegalArgumentException("ID do livro inválido para atualização.");
-        }
-        validarLivro(livro);
         livroDao.atualizar(livro);
     }
 
-    public void excluirLivro(Long id) throws SQLException, IllegalArgumentException {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("ID inválido.");
-        }
-        livroDao.deletar(id);
-    }
-
-    public List<Livro> listarTodos() throws SQLException {
+    public List<Livro> listarTodos() {
         return livroDao.listarTodos();
-    }
-
-    public Livro buscarPorId(Long id) throws SQLException {
-        return livroDao.buscarPorId(id);
     }
 
     private void validarLivro(Livro livro) {

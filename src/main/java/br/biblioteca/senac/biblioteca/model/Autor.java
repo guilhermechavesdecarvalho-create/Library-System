@@ -32,6 +32,10 @@ public class Autor {
         return nome;
     }
 
+    public void setAutor (String nome){
+        this.nome = nome;
+    }
+
     public String getNacionalidade() {
         return nacionalidade;
     }

@@ -28,12 +28,41 @@ public class UsuarioDaoMySQLImpl implements UsuarioDao {
                     usuario.setId(rs.getLong(1));
                 }
             }
-
-            System.out.println("Usuário salvo com sucesso no banco de dados!");
-
         } catch (SQLException e) {
-            System.err.println("Erro ao salvar o usuário: " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new RuntimeException("Erro ao salvar o usuário: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void atualizar(Usuario usuario) {
+        String sql = "UPDATE usuario SET nome = ?, cpf = ?, email = ?, telefone = ? WHERE id = ?";
+
+        try (Connection conexao = Conexao.conectar();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setString(1, usuario.getNome());
+            stmt.setString(2, usuario.getCPF());
+            stmt.setString(3, usuario.getEmail());
+            stmt.setString(4, usuario.getTelefone());
+            stmt.setLong(5, usuario.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar o usuário: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void deletar(Long id) {
+        String sql = "DELETE FROM usuario WHERE id = ?";
+
+        try (Connection conexao = Conexao.conectar();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao deletar o usuário: " + e.getMessage(), e);
         }
     }
 
@@ -57,7 +86,32 @@ public class UsuarioDaoMySQLImpl implements UsuarioDao {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Erro ao buscar usuário por ID: " + e.getMessage());
+            throw new RuntimeException("Erro ao buscar usuário por ID: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public Usuario buscarPorCpf(String cpf) {
+        String sql = "SELECT * FROM usuario WHERE cpf = ?";
+
+        try (Connection conexao = Conexao.conectar();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Usuario usuario = new Usuario();
+                    usuario.setId(rs.getLong("id"));
+                    usuario.setNome(rs.getString("nome"));
+                    usuario.setCPF(rs.getString("cpf"));
+                    usuario.setEmail(rs.getString("email"));
+                    usuario.setTelefone(rs.getString("telefone"));
+                    return usuario;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar usuário por CPF: " + e.getMessage(), e);
         }
         return null;
     }
@@ -78,11 +132,10 @@ public class UsuarioDaoMySQLImpl implements UsuarioDao {
                 usuario.setCPF(rs.getString("cpf"));
                 usuario.setEmail(rs.getString("email"));
                 usuario.setTelefone(rs.getString("telefone"));
-
                 usuarios.add(usuario);
             }
         } catch (SQLException e) {
-            System.err.println("Erro ao listar os usuários: " + e.getMessage());
+            throw new RuntimeException("Erro ao listar os usuários: " + e.getMessage(), e);
         }
         return usuarios;
     }

@@ -5,7 +5,9 @@ import br.biblioteca.senac.biblioteca.model.Usuario;
 
 public interface UsuarioDao {
     void salvar(Usuario usuario);
+    void atualizar(Usuario usuario);
+    void deletar(Long id);
     Usuario buscarPorId(Long id);
+    Usuario buscarPorCpf(String cpf);
     List<Usuario> listarTodos();
-    
 }

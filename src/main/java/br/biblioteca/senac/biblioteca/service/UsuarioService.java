@@ -1,6 +1,7 @@
 package br.biblioteca.senac.biblioteca.service;
 
 import br.biblioteca.senac.biblioteca.dao.UsuarioDao;
+import br.biblioteca.senac.biblioteca.dao.UsuarioDaoMySQLImpl;
 import br.biblioteca.senac.biblioteca.model.Usuario;
 
 import java.sql.SQLException;
@@ -11,17 +12,19 @@ public class UsuarioService {
     private UsuarioDao usuarioDAO;
 
     public UsuarioService() {
-        this.usuarioDAO = new UsuarioDao();
+        // Corrigido para instanciar a implementação MySQL
+        this.usuarioDAO = new UsuarioDaoMySQLImpl();
     }
 
     public void cadastrarUsuario(Usuario usuario) throws SQLException, IllegalArgumentException {
         validarUsuario(usuario);
 
-        if (usuarioDAO.buscarPorCpf(usuario.getCpf()) != null) {
+        if (usuarioDAO.buscarPorCpf(usuario.getCPF()) != null) {
             throw new IllegalArgumentException("Já existe um usuário cadastrado com este CPF.");
         }
 
-        usuarioDAO.inserir(usuario);
+        // Corrigido de inserir para salvar
+        usuarioDAO.salvar(usuario);
     }
 
     public void atualizarUsuario(Usuario usuario) throws SQLException, IllegalArgumentException {
@@ -54,10 +57,10 @@ public class UsuarioService {
         if (usuario.getNome() == null || usuario.getNome().trim().isEmpty()) {
             throw new IllegalArgumentException("O nome do usuário é obrigatório.");
         }
-        if (usuario.getCpf() == null || usuario.getCpf().trim().isEmpty()) {
+        if (usuario.getCPF() == null || usuario.getCPF().trim().isEmpty()) {
             throw new IllegalArgumentException("O CPF do usuário é obrigatório.");
         }
-        if (usuario.getCpf().replaceAll("\\D", "").length() != 11) {
+        if (usuario.getCPF().replaceAll("\\D", "").length() != 11) {
             throw new IllegalArgumentException("O CPF deve conter 11 dígitos.");
         }
     }

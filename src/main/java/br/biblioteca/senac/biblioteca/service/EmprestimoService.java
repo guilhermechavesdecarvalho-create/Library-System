@@ -1,8 +1,11 @@
 package br.biblioteca.senac.biblioteca.service;
 
 import br.biblioteca.senac.biblioteca.dao.EmprestimoDao;
+import br.biblioteca.senac.biblioteca.dao.EmprestimoDaoMySQLImpl;
 import br.biblioteca.senac.biblioteca.dao.LivroDao;
+import br.biblioteca.senac.biblioteca.dao.LivroDaoMySQLImpl; // Ajuste se o nome da implementação do seu LivroDao for diferente
 import br.biblioteca.senac.biblioteca.dao.UsuarioDao;
+import br.biblioteca.senac.biblioteca.dao.UsuarioDaoMySQLImpl;
 import br.biblioteca.senac.biblioteca.model.Emprestimo;
 import br.biblioteca.senac.biblioteca.model.Livro;
 import br.biblioteca.senac.biblioteca.model.Usuario;
@@ -13,14 +16,15 @@ import java.util.List;
 
 public class EmprestimoService {
 
-    private EmprestimoDao emprestimoDAO;
-    private LivroDao livroDAO;
-    private UsuarioDao usuarioDAO;
+    private EmprestimoDao emprestimoDao;
+    private LivroDao livroDao;
+    private UsuarioDao usuarioDao;
 
     public EmprestimoService() {
-        this.emprestimoDAO = new EmprestimoDao();
-        this.livroDAO = new LivroDao();
-        this.usuarioDAO = new UsuarioDao();
+        // Corrigido para instanciar as implementações corretas
+        this.emprestimoDao = new EmprestimoDaoMySQLImpl();
+        this.livroDao = new LivroDaoMySQLImpl(); 
+        this.usuarioDao = new UsuarioDaoMySQLImpl();
     }
 
     public void realizarEmprestimo(Emprestimo emprestimo) throws SQLException, IllegalArgumentException {
@@ -28,7 +32,7 @@ public class EmprestimoService {
             throw new IllegalArgumentException("Os dados do empréstimo não podem ser nulos.");
         }
 
-        if (emprestimo.getLivro() == null || emprestimo.getLivro().getId() == null) {
+        if (emprestimo.getLivro() == null || emprestimo.getLivro().getId() <= 0) {
             throw new IllegalArgumentException("O livro informado para o empréstimo é inválido.");
         }
 
@@ -36,12 +40,12 @@ public class EmprestimoService {
             throw new IllegalArgumentException("O usuário informado para o empréstimo é inválido.");
         }
 
-        Usuario usuario = usuarioDAO.buscarPorId(emprestimo.getUsuario().getId());
+        Usuario usuario = usuarioDao.buscarPorId(emprestimo.getUsuario().getId());
         if (usuario == null) {
             throw new IllegalArgumentException("Usuário não encontrado no sistema.");
         }
 
-        Livro livro = livroDAO.buscarPorId(emprestimo.getLivro().getId());
+        Livro livro = livroDao.buscarPorId(emprestimo.getLivro().getId());
         if (livro == null) {
             throw new IllegalArgumentException("Livro não encontrado no sistema.");
         }
@@ -54,14 +58,15 @@ public class EmprestimoService {
             emprestimo.setDataEmprestimo(LocalDate.now());
         }
         
-        if (emprestimo.getDataDevolucaoPrevista() == null) {
-            emprestimo.setDataDevolucaoPrevista(emprestimo.getDataEmprestimo().plusDays(14));
+        if (emprestimo.getDataDevolucao() == null) {
+            emprestimo.setDataDevolucao(emprestimo.getDataEmprestimo().plusDays(14));
         }
 
-        emprestimoDAO.inserir(emprestimo);
+        // Corrigido de inserir para salvar
+        emprestimoDao.salvar(emprestimo);
 
         livro.setQuantidadeDisponivel(livro.getQuantidadeDisponivel() - 1);
-        livroDAO.atualizar(livro);
+        livroDao.atualizar(livro);
     }
 
     public void realizarDevolucao(Long emprestimoId) throws SQLException, IllegalArgumentException {
@@ -69,30 +74,28 @@ public class EmprestimoService {
             throw new IllegalArgumentException("ID do empréstimo inválido.");
         }
 
-        Emprestimo emprestimo = emprestimoDAO.buscarPorId(emprestimoId);
+        Emprestimo emprestimo = emprestimoDao.buscarPorId(emprestimoId);
         if (emprestimo == null) {
             throw new IllegalArgumentException("Empréstimo não encontrado.");
         }
 
-        if (emprestimo.getDataDevolucaoReal() != null) {
-            throw new IllegalArgumentException("Este empréstimo já foi finalizado/devolvido.");
-        }
+        emprestimo.setDataDevolucao(LocalDate.now());
+        
+        // Corrigido o erro de digitação da variável (emprestimoDAO -> emprestimoDao)
+        emprestimoDao.atualizar(emprestimo);
 
-        emprestimo.setDataDevolucaoReal(LocalDate.now());
-        emprestimoDAO.atualizar(emprestimo);
-
-        Livro livro = livroDAO.buscarPorId(emprestimo.getLivro().getId());
+        Livro livro = livroDao.buscarPorId(emprestimo.getLivro().getId());
         if (livro != null) {
             livro.setQuantidadeDisponivel(livro.getQuantidadeDisponivel() + 1);
-            livroDAO.atualizar(livro);
+            livroDao.atualizar(livro);
         }
     }
 
     public List<Emprestimo> listarTodos() throws SQLException {
-        return emprestimoDAO.listarTodos();
+        return emprestimoDao.listarTodos();
     }
 
     public Emprestimo buscarPorId(Long id) throws SQLException {
-        return emprestimoDAO.buscarPorId(id);
+        return emprestimoDao.buscarPorId(id);
     }
 }

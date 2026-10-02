@@ -12,7 +12,7 @@ import br.biblioteca.senac.biblioteca.model.Livro;
 public class LivroDaoMySQLImpl implements LivroDao {
 
     @Override
-    public void salvar(Livro livro) {
+    public void atualizar(Livro livro) {
         String sql = "INSERT INTO livro ( id, titulo, quantidade_total, quantidade_disponivel, isbn, editora, autor_id) VALUES (?,?,?, ?, ?, ?, ?)";
 
         try (Connection conexao = Conexao.conectar();
@@ -110,5 +110,42 @@ public class LivroDaoMySQLImpl implements LivroDao {
             System.err.println("Erro ao listar os livros: " + e.getMessage());
         }
         return livros;
+    }
+
+    @Override
+    public Livro buscarPorId(Long id) {
+        String sql = "SELECT l.*, a.nome as autor_nome, a.nacionalidade as autor_nacionalidade " +
+                     "FROM livro l INNER JOIN autor a ON l.autor_id = a.id WHERE l.id = ?";
+
+        try (Connection conexao = Conexao.conectar();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Autor autor = new Autor(
+                        rs.getLong("autor_id"),
+                        rs.getString("autor_nome"),
+                        rs.getString("autor_nacionalidade")
+                    );
+
+                    Livro livro = new Livro(
+                        rs.getString("titulo"),
+                        autor,
+                        rs.getInt("quantidade_total"),
+                        rs.getString("ISBN"),
+                        rs.getString("editora")
+                    );
+
+                    livro.setId(rs.getLong("id"));
+                    livro.setQuantidadeDisponivel(rs.getInt("quantidade_disponivel"));
+
+                    return livro;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar livro por ID: " + e.getMessage(), e);
+        }
+        return null;
     }
 }

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Livros</title>
+</head>
+
+<body>
+
+    
+
+    
+    <h1 style="color: HotPink;">Cadastro de Livros</h1>
+
+    <form> 
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" name="titulo" placeholder ="Ex: Java para Iniciantes" required><br><br>
+
+        <label for="autor">Autor:</label>
+        <input type="text" id="autor" name="autor" placeholder ="Ex: Gustavo Guanabara" required><br><br>
+
+        <label for="ano">Ano de Publicação:</label>
+        <input type="number" id="ano" name="ano" placeholder ="Ex: 2020" required><br><br>
+
+        <label for = "genero">Gênero:</label>
+        <select id="genero" name="genero" required>
+            <option value="">Selecione</option>
+            <option value="ficcao">Ficção</option>
+            <option value="romance">Romance</option>
+            <option value="aventura">Aventura</option>
+            <option value="fantasia">Fantasia</option>
+            <option value="terror">Terror</option>
+            <option value="biografia">Biografia</option>
+            <option value="autoajuda">Autoajuda</option>
+            <option value="outro">Outro</option>
+        </select><br><br>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+    <style>
+        table,th, td{
+                border: 1px solid black;
+                border-collapse: collapse;
+                 
+            }
+
+        th,td{
+            padding-top: 2px;
+            padding-bottom: 2px;
+            padding-left: 2px;
+            padding-right: 2px;
+        }    
+
+        th{
+            text-align: left;
+        }
+    </style>
+        
+        <table style="width: 15%;">
+            <br>
+            
+            <hr>
+            <caption><strong>Livros Cadastrados </strong></caption>
+            
+            
+                <tr>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Ano de Publicação</th>
+                    <th>Gênero</th>
+                </tr>
+
+                <tr>
+                        
+                    <td>Java </td>
+                    <td>Gustavo Guanabara</td>
+                    <td>2020</td>
+                    <td>Ensino</td>
+                    
+                </tr>           
+        </table>
+    
+</body>
+</html>
