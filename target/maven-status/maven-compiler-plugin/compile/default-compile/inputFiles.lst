@@ -1,0 +1,16 @@
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\connection\Conexao.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\dao\EmprestimoDao.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\dao\EmprestimoDaoMySQLImpl.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\dao\LivroDao.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\dao\LivroDaoMySQLImpl.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\dao\UsuarioDao.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\dao\UsuarioDaoMySQLImpl.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\exception\LivroIndisponivelException.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\Main.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\model\Autor.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\model\Emprestimo.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\model\Livro.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\model\Usuario.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\service\EmprestimoService.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\service\LivroService.java
+C:\Users\Dell\.vscode\Biblioteca\src\main\java\br\biblioteca\senac\biblioteca\service\UsuarioService.java

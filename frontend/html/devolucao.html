@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devolução de Livros - Biblioteca</title>
+    <!-- Caminho corrigido: volta uma pasta para achar a pasta css -->
+    <link rel="stylesheet" href="../css/devolucao.css">
+    <link rel="icon" type="image/png" href="../img/logo.png">
+</head>
+<body>
+    <div class="container-acao">
+        <div class="topo-nav">
+            <!-- Caminho corrigido: volta uma pasta para achar o index.html -->
+            <a href="../index.html" class="btn-voltar">← Voltar ao Início</a>
+        </div>
+
+        <form>
+            <h1>Devolução de Livros</h1>      
+        
+            <div class="campo-grupo">
+                <label for="titulo">Título do Livro:</label>
+                <input type="text" id="titulo" name="titulo" placeholder="Ex: Java para Iniciantes" required>
+            </div>
+
+            <div class="campo-grupo">
+                <label for="nome">Nome do Usuário:</label>
+                <input type="text" id="nome" name="nome" placeholder="Ex: Maria Silva" required>
+            </div>
+
+            <button type="submit" class="btn-acao">Realizar Devolução</button>
+        </form>
+    </div>
+</body>
+</html>

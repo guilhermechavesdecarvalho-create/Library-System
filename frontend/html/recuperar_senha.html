@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha - Biblioteca Senac</title>
+    <link rel="icon" type="image/png" href="../img/logo.png">
+    <!-- Caminho corrigido com ../ para voltar da pasta html para a raiz -->
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo-area">
+                <h2>Recuperar Senha</h2>
+                <p>Enviaremos instruções para o seu e-mail</p>
+            </div>
+
+            <form id="form-recuperar">
+                <div class="campo-grupo">
+                    <label for="email">E-mail cadastrado</label>
+                    <input type="email" id="email" name="email" placeholder="seu.email@senac.br" required>
+                </div>
+
+                <button type="submit" class="btn-acao">Enviar Instruções</button>
+            </form>
+
+            <div class="login-footer" style="margin-top: 25px; text-align: center;">
+                <a href="../index.html">← Voltar para o Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('form-recuperar').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Instruções de recuperação enviadas para o seu e-mail!');
+            window.location.href = '../index.html';
+        });
+    </script>
+
+</body>
+</html>
