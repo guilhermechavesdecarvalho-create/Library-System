@@ -1,0 +1,102 @@
+package br.biblioteca.senac.biblioteca;
+
+import br.biblioteca.senac.biblioteca.dao.UsuarioDao;
+import br.biblioteca.senac.biblioteca.dao.UsuarioDaoMySQLImpl;
+import br.biblioteca.senac.biblioteca.model.Usuario;
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpExchange;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+
+public class Servidor {
+    public static void main(String[] args) throws IOException {
+        int porta = 8080;
+  
+        HttpServer servidor = HttpServer.create(new InetSocketAddress(porta), 0);
+
+        // Endpoint para processar o login
+        servidor.createContext("/api/login", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange troca) throws IOException {
+                // Configurar cabeçalhos CORS para permitir chamadas do front-end HTML
+                troca.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                troca.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
+                troca.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+
+                if (troca.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+                    troca.sendResponseHeaders(204, -1);
+                    return;
+                }
+
+                if (troca.getRequestMethod().equalsIgnoreCase("POST")) {
+                    // Ler o corpo da requisição (JSON enviado pelo fetch do HTML)
+                    InputStreamReader isr = new InputStreamReader(troca.getRequestBody(), StandardCharsets.UTF_8);
+                    BufferedReader br = new BufferedReader(isr);
+                    StringBuilder sb = new StringBuilder();
+                    String linha;
+                    while ((linha = br.readLine()) != null) {
+                        sb.append(linha);
+                    }
+                    String corpoJson = sb.toString();
+
+                    // Extração simples dos dados do JSON (email e senha)
+                    String email = extrairValorJson(corpoJson, "email");
+                    String senha = extrairValorJson(corpoJson, "senha");
+
+                    // Usar o DAO para buscar o usuário no banco de dados
+                    UsuarioDao usuarioDao = new UsuarioDaoMySQLImpl();
+                    Usuario usuario = usuarioDao.buscarPorEmail(email);
+
+                    String respostaJson;
+                    int statusHttp;
+
+                    // Validação simples (verificando se o utilizador existe)
+                    if (usuario != null) {
+                        // Se você tiver o campo senha na model, pode validar aqui: 
+                        // if (usuario.getSenha().equals(senha)) { ... }
+                        
+                        statusHttp = 200;
+                        respostaJson = "{\"sucesso\": true, \"mensagem\": \"Login realizado com sucesso!\"}";
+                    } else {
+                        statusHttp = 401;
+                        respostaJson = "{\"sucesso\": false, \"mensagem\": \"E-mail ou palavra-passe incorretos.\"}";
+                    }
+
+                    // Enviar a resposta de volta para o navegador
+                    troca.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                    byte[] respostaBytes = respostaJson.getBytes(StandardCharsets.UTF_8);
+                    troca.sendResponseHeaders(statusHttp, respostaBytes.length);
+                    
+                    OutputStream os = troca.getResponseBody();
+                    os.write(respostaBytes);
+                    os.close();
+                }
+            }
+        });
+
+        servidor.setExecutor(null);
+        servidor.start();
+        System.out.println("Servidor HTTP a correr na porta " + porta + "!");
+    }
+
+    // Método auxiliar simples para extrair valores do JSON sem precisar de bibliotecas externas pesadas
+    private static String extrairValorJson(String json, chave) {
+        // Implementação básica de leitura de chave/valor do JSON enviado pelo front-end
+        try {
+            String busca = "\"" + chave + "\":\"";
+            int inicio = json.indexOf(busca);
+            if (inicio == -1) return "";
+            inicio += busca.length();
+            int fim = json.indexOf("\"", inicio);
+            return json.substring(inicio, fim);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+}

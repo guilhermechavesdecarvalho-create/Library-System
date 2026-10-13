@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Biblioteca Senac</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo-area">
+                <img src="img/logo.png" alt="Logo Biblioteca Senac" class="logo-login">
+                <h2>Bem-vindo(a)</h2>
+                <p>Faça login para aceder ao sistema da biblioteca</p>
+            </div>
+
+            <form id="form-login">
+                <div class="campo-grupo">
+                    <label for="email">E-mail institucional</label>
+                    <input type="email" id="email" name="email" placeholder="seu.email@senac.br" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="senha">Palavra-passe</label>
+                    <input type="password" id="senha" name="senha" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-acao">Entrar no Sistema</button>
+            </form>
+
+            <div class="login-links">
+                <a href="html/recuperar_senha.html">Esqueceu a senha?</a>
+                <a href="html/cadastro_usuario.html">Criar nova conta</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('form-login').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+
+        try {
+            const resposta = await fetch('http://localhost:8080/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, senha })
+            });
+
+            const resultado = await resposta.json();
+
+            if (resposta.ok && resultado.sucesso) {
+                alert(resultado.mensagem);
+                window.location.href = 'html/painel.html'; // Entra no painel da biblioteca
+            } else {
+                alert(resultado.mensagem || 'Erro ao efetuar login.');
+            }
+        } catch (erro) {
+            console.error('Erro de conexão:', erro);
+            alert('Não foi possível conectar ao servidor Java na porta 8080.');
+        }
+    });
+</script>
+
+</body>
+</html>
