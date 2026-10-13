@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastrar livro | Biblioteca Senac</title>
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+
+<body class="app-page">
+    <aside class="sidebar"><a class="sidebar-brand" th:href="@{/painel}"><span
+                class="brand-mark small">B</span><span>Biblioteca <small>SENAC · GESTÃO</small></span></a>
+        <p class="nav-label">MENU PRINCIPAL</p>
+        <nav class="main-nav"><a class="nav-link" th:href="@{/painel}">▦ Visão geral</a><a class="nav-link"
+                th:href="@{/livros}">▤ Acervo de livros</a><a class="nav-link active" th:href="@{/cadastrar}">＋
+                Cadastrar livro</a><a class="nav-link" th:href="@{/emprestimos}">⇄ Novo empréstimo</a><a
+                class="nav-link" th:href="@{/emprestimos/lista}">↩ Devoluções</a><a class="nav-link"
+                th:href="@{/usuarios}">♙ Usuários</a></nav>
+        <div class="sidebar-bottom">
+            <div class="profile-dot" th:text="${#strings.substring(session.usuarioNome,0,1).toUpperCase()}">U</div>
+            <div class="profile-text"><strong th:text="${session.usuarioNome}">Usuário</strong><small>Conta
+                    ativa</small></div>
+            <form th:action="@{/logout}" method="post"><button class="icon-button" aria-label="Sair">↪</button></form>
+        </div>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">ACERVO</p>
+                <h1>Cadastrar livro</h1>
+            </div><a class="button button-secondary" th:href="@{/livros}">← Voltar ao acervo</a>
+        </header>
+        <div class="alert alert-error" th:if="${erro}" th:text="${erro}" role="alert"></div>
+        <section class="panel form-panel">
+            <div class="panel-heading">
+                <div>
+                    <h3>Informações do livro</h3>
+                    <p>Preencha os dados bibliográficos para adicionar um título.</p>
+                </div><span class="required-note">* Campos obrigatórios</span>
+            </div>
+            <form th:action="@{/livros/cadastrar}" method="post" class="form-grid">
+                <div class="field span-2"><label for="titulo">Título do livro *</label><input id="titulo" name="titulo"
+                        required maxlength="200" placeholder="Ex.: Introdução à programação"></div>
+                <div class="field"><label for="autor">Autor(a) *</label><input id="autor" name="autor" required
+                        maxlength="150" placeholder="Nome completo"></div>
+                <div class="field"><label for="nacionalidade">Nacionalidade do autor</label><input id="nacionalidade"
+                        name="nacionalidade" value="Brasileira" maxlength="100"></div>
+                <div class="field"><label for="isbn">ISBN *</label><input id="isbn" name="isbn" required maxlength="50"
+                        placeholder="Código ISBN"></div>
+                <div class="field"><label for="editora">Editora *</label><input id="editora" name="editora" required
+                        maxlength="150" placeholder="Nome da editora"></div>
+                <div class="field"><label for="quantidadeTotal">Quantidade de exemplares *</label><input
+                        id="quantidadeTotal" name="quantidadeTotal" type="number" min="1" max="10000" value="1"
+                        required></div>
+                <div class="form-actions span-2"><a class="button button-secondary"
+                        th:href="@{/livros}">Cancelar</a><button class="button button-primary" type="submit">Salvar
+                        livro <span>→</span></button></div>
+            </form>
+        </section>
+    </main>
+</body>
+
+</html>

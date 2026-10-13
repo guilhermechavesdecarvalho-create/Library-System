@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Novo empréstimo | Biblioteca Senac</title>
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+
+<body class="app-page">
+    <aside class="sidebar"><a class="sidebar-brand" th:href="@{/painel}"><span
+                class="brand-mark small">B</span><span>Biblioteca <small>SENAC · GESTÃO</small></span></a>
+        <p class="nav-label">MENU PRINCIPAL</p>
+        <nav class="main-nav"><a class="nav-link" th:href="@{/painel}">▦ Visão geral</a><a class="nav-link"
+                th:href="@{/livros}">▤ Acervo de livros</a><a class="nav-link" th:href="@{/cadastrar}">＋ Cadastrar
+                livro</a><a class="nav-link active" th:href="@{/emprestimos}">⇄ Novo empréstimo</a><a class="nav-link"
+                th:href="@{/emprestimos/lista}">↩ Devoluções</a><a class="nav-link" th:href="@{/usuarios}">♙
+                Usuários</a></nav>
+        <div class="sidebar-bottom">
+            <div class="profile-dot" th:text="${#strings.substring(session.usuarioNome,0,1).toUpperCase()}">U</div>
+            <div class="profile-text"><strong th:text="${session.usuarioNome}">Usuário</strong><small>Conta
+                    ativa</small></div>
+            <form th:action="@{/logout}" method="post"><button class="icon-button" aria-label="Sair">↪</button></form>
+        </div>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">CIRCULAÇÃO</p>
+                <h1>Novo empréstimo</h1>
+                <p class="muted">Vincule um título disponível a um usuário cadastrado.</p>
+            </div><a class="button button-secondary" th:href="@{/emprestimos/lista}">Ver empréstimos</a>
+        </header>
+        <div class="alert alert-error" th:if="${erro}" th:text="${erro}" role="alert"></div>
+        <section class="panel form-panel">
+            <div class="panel-heading">
+                <div>
+                    <h3>Dados do empréstimo</h3>
+                    <p>O prazo padrão de devolução é de 14 dias.</p>
+                </div><span class="status-pill status-active">Prazo: 14 dias</span>
+            </div>
+            <form th:action="@{/emprestimos}" method="post" class="form-stack form-narrow">
+                <div class="field"><label for="livroId">Livro disponível *</label><select id="livroId" name="livroId"
+                        required>
+                        <option value="">Selecione um título</option>
+                        <option th:each="livro : ${livros}" th:value="${livro.id}"
+                            th:text="${livro.titulo + ' — ' + livro.quantidadeDisponivel + ' disponível(is)'}"></option>
+                    </select><small th:if="${livros == null or livros.isEmpty()}">Não há livros disponíveis. Cadastre
+                        títulos ou registre devoluções.</small></div>
+                <div class="field"><label for="usuarioId">Usuário *</label><select id="usuarioId" name="usuarioId"
+                        required>
+                        <option value="">Selecione um usuário</option>
+                        <option th:each="usuario : ${usuarios}" th:value="${usuario.id}"
+                            th:text="${usuario.nome + ' · ' + usuario.email}"></option>
+                    </select><small th:if="${usuarios == null or usuarios.isEmpty()}">Cadastre uma conta antes de
+                        registrar um empréstimo.</small></div>
+                <div class="notice"><span>i</span>
+                    <p>Cada usuário pode manter até três empréstimos ativos. O sistema valida a disponibilidade antes de
+                        registrar a operação.</p>
+                </div>
+                <div class="form-actions"><a class="button button-secondary" th:href="@{/painel}">Cancelar</a><button
+                        class="button button-primary" type="submit"
+                        th:disabled="${livros == null or livros.isEmpty() or usuarios == null or usuarios.isEmpty()}">Confirmar
+                        empréstimo →</button></div>
+            </form>
+        </section>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Painel | Biblioteca Senac</title>
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+
+<body class="app-page">
+    <aside class="sidebar"><a class="sidebar-brand" th:href="@{/painel}"><span
+                class="brand-mark small">B</span><span>Biblioteca <small>SENAC · GESTÃO</small></span></a>
+        <p class="nav-label">MENU PRINCIPAL</p>
+        <nav class="main-nav"><a class="nav-link active" th:href="@{/painel}"><span>▦</span> Visão geral</a><a
+                class="nav-link" th:href="@{/livros}"><span>▤</span> Acervo de livros</a><a class="nav-link"
+                th:href="@{/cadastrar}"><span>＋</span> Cadastrar livro</a><a class="nav-link"
+                th:href="@{/emprestimos}"><span>⇄</span> Novo empréstimo</a><a class="nav-link"
+                th:href="@{/emprestimos/lista}"><span>↩</span> Devoluções</a><a class="nav-link"
+                th:href="@{/usuarios}">♙ Usuários</a></nav>
+        <div class="sidebar-bottom">
+            <div class="profile-dot" th:text="${#strings.substring(session.usuarioNome,0,1).toUpperCase()}">U</div>
+            <div class="profile-text"><strong th:text="${session.usuarioNome}">Usuário</strong><small>Conta
+                    ativa</small></div>
+            <form th:action="@{/logout}" method="post"><button class="icon-button" aria-label="Sair"
+                    title="Sair">↪</button></form>
+        </div>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">ESPAÇO DE GESTÃO</p>
+                <h1>Visão geral</h1>
+            </div>
+            <div class="topbar-right"><span class="status-dot"></span><span>Biblioteca em operação</span></div>
+        </header>
+        <section class="welcome-banner">
+            <div>
+                <p class="eyebrow light">BIBLIOTECA SENAC</p>
+                <h2>Olá, <span th:text="${session.usuarioNome}">usuário</span>.</h2>
+                <p>Confira os indicadores e continue de onde parou.</p>
+            </div>
+            <div class="banner-icon">▤</div>
+        </section>
+        <div class="alert alert-error" th:if="${erro}" th:text="${erro}" role="alert"></div>
+        <section class="stats-grid">
+            <article class="stat-card">
+                <div class="stat-icon blue">▤</div>
+                <p>Total de títulos</p><strong th:text="${totalLivros ?: 0}">0</strong><small>Registros no
+                    acervo</small>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon violet">♙</div>
+                <p>Usuários cadastrados</p><strong th:text="${totalUsuarios ?: 0}">0</strong><small>Leitores
+                    registrados</small>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon teal">⇄</div>
+                <p>Empréstimos ativos</p><strong th:text="${emprestimosAtivos ?: 0}">0</strong><small>Precisam de
+                    acompanhamento</small>
+            </article>
+        </section>
+        <section class="content-grid">
+            <article class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <h3>Acesso rápido</h3>
+                        <p>Atalhos para as tarefas frequentes</p>
+                    </div>
+                </div>
+                <div class="quick-actions"><a class="quick-action" th:href="@{/cadastrar}"><span
+                            class="quick-icon">＋</span><span><strong>Cadastrar livro</strong><small>Adicionar título ao
+                                acervo</small></span><b>→</b></a><a class="quick-action" th:href="@{/emprestimos}"><span
+                            class="quick-icon">⇄</span><span><strong>Registrar empréstimo</strong><small>Vincular livro
+                                e leitor</small></span><b>→</b></a><a class="quick-action"
+                        th:href="@{/emprestimos/lista}"><span class="quick-icon">↩</span><span><strong>Gerenciar
+                                devoluções</strong><small>Consultar empréstimos atuais</small></span><b>→</b></a></div>
+            </article>
+            <article class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <h3>Empréstimos recentes</h3>
+                        <p>Últimas movimentações registradas</p>
+                    </div><a th:href="@{/emprestimos/lista}" class="text-link">Ver todos →</a>
+                </div>
+                <div class="recent-list" th:if="${emprestimosRecentes != null and !emprestimosRecentes.isEmpty()}">
+                    <div class="recent-item" th:each="e : ${emprestimosRecentes}">
+                        <div class="book-mini">▤</div>
+                        <div class="recent-info"><strong th:text="${e.livro.titulo}">Livro</strong><small
+                                th:text="${e.usuario.nome}">Leitor</small></div><span class="status-pill"
+                            th:classappend="${e.status ? ' status-active' : ' status-done'}"
+                            th:text="${e.status ? 'Ativo' : 'Devolvido'}">Ativo</span>
+                    </div>
+                </div>
+                <div class="empty-state" th:if="${emprestimosRecentes == null or emprestimosRecentes.isEmpty()}">
+                    <span>▤</span><strong>Nenhuma movimentação ainda</strong>
+                    <p>Os empréstimos aparecerão aqui após o primeiro registro.</p>
+                </div>
+            </article>
+        </section>
+        <footer class="app-footer">Biblioteca Senac <span>·</span> Sistema de gestão acadêmica</footer>
+    </main>
+</body>
+
+</html>

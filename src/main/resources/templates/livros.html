@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Acervo de livros | Biblioteca Senac</title>
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+
+<body class="app-page">
+    <aside class="sidebar"><a class="sidebar-brand" th:href="@{/painel}"><span
+                class="brand-mark small">B</span><span>Biblioteca <small>SENAC · GESTÃO</small></span></a>
+        <p class="nav-label">MENU PRINCIPAL</p>
+        <nav class="main-nav"><a class="nav-link" th:href="@{/painel}">▦ Visão geral</a><a class="nav-link active"
+                th:href="@{/livros}">▤ Acervo de livros</a><a class="nav-link" th:href="@{/cadastrar}">＋ Cadastrar
+                livro</a><a class="nav-link" th:href="@{/emprestimos}">⇄ Novo empréstimo</a><a class="nav-link"
+                th:href="@{/emprestimos/lista}">↩ Devoluções</a><a class="nav-link" th:href="@{/usuarios}">♙
+                Usuários</a></nav>
+        <div class="sidebar-bottom">
+            <div class="profile-dot" th:text="${#strings.substring(session.usuarioNome,0,1).toUpperCase()}">U</div>
+            <div class="profile-text"><strong th:text="${session.usuarioNome}">Usuário</strong><small>Conta
+                    ativa</small></div>
+            <form th:action="@{/logout}" method="post"><button class="icon-button" aria-label="Sair">↪</button></form>
+        </div>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">CATÁLOGO</p>
+                <h1>Acervo de livros</h1>
+                <p class="muted">Consulte e gerencie os títulos cadastrados.</p>
+            </div><a class="button button-primary" th:href="@{/cadastrar}">＋ Cadastrar livro</a>
+        </header>
+        <div class="alert alert-success" th:if="${sucesso}" th:text="${sucesso}" role="status"></div>
+        <div class="alert alert-error" th:if="${erro}" th:text="${erro}" role="alert"></div>
+        <section class="panel">
+            <form method="get" th:action="@{/livros}" class="search-row">
+                <div class="search-field"><span>⌕</span><input type="search" name="busca" th:value="${busca}"
+                        placeholder="Buscar por título, autor ou ISBN..." aria-label="Buscar livros"></div><button
+                    class="button button-secondary" type="submit">Buscar</button><a class="button button-ghost"
+                    th:href="@{/livros}" th:if="${busca != null and !busca.isBlank()}">Limpar</a>
+            </form>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Livro</th>
+                            <th>Autor(a)</th>
+                            <th>ISBN</th>
+                            <th>Disponibilidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="livro : ${livros}">
+                            <td>
+                                <div class="table-book"><span class="book-mini">▤</span>
+                                    <div><strong th:text="${livro.titulo}">Título</strong><small
+                                            th:text="${livro.editora}">Editora</small></div>
+                                </div>
+                            </td>
+                            <td th:text="${livro.autor.nome}">Autor</td>
+                            <td><span class="isbn" th:text="${livro.isbn}">ISBN</span></td>
+                            <td><span class="status-pill"
+                                    th:classappend="${livro.quantidadeDisponivel > 0 ? ' status-active' : ' status-unavailable'}"
+                                    th:text="${livro.quantidadeDisponivel + ' de ' + livro.quantidadeTotal + ' disponíveis'}">Disponível</span>
+                            </td>
+                            <td>
+                                <div class="table-actions"><a class="small-action" th:href="@{/emprestimos}"
+                                        title="Registrar empréstimo">Emprestar</a>
+                                    <form th:action="@{/livros/{id}/excluir(id=${livro.id})}" method="post"
+                                        onsubmit="return confirm('Deseja realmente excluir este livro?')"><button
+                                            class="small-action danger-action" type="submit">Excluir</button></form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${livros == null or livros.isEmpty()}">
+                            <td colspan="5">
+                                <div class="empty-state"><span>▤</span><strong>Nenhum livro encontrado</strong>
+                                    <p
+                                        th:text="${busca != null and !busca.isBlank() ? 'Tente alterar os termos da busca.' : 'Cadastre o primeiro título para começar o acervo.'}">
+                                        Cadastre um livro.</p><a class="button button-primary"
+                                        th:href="@{/cadastrar}">Cadastrar livro</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-foot"><span th:text="${livros.size() + ' título(s) listado(s)'}">0
+                    títulos</span><span>Biblioteca Senac</span></div>
+        </section>
+    </main>
+</body>
+
+</html>

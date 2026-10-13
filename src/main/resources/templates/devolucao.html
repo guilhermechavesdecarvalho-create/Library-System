@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Empréstimos e devoluções | Biblioteca Senac</title>
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+
+<body class="app-page">
+    <aside class="sidebar"><a class="sidebar-brand" th:href="@{/painel}"><span
+                class="brand-mark small">B</span><span>Biblioteca <small>SENAC · GESTÃO</small></span></a>
+        <p class="nav-label">MENU PRINCIPAL</p>
+        <nav class="main-nav"><a class="nav-link" th:href="@{/painel}">▦ Visão geral</a><a class="nav-link"
+                th:href="@{/livros}">▤ Acervo de livros</a><a class="nav-link" th:href="@{/cadastrar}">＋ Cadastrar
+                livro</a><a class="nav-link" th:href="@{/emprestimos}">⇄ Novo empréstimo</a><a class="nav-link active"
+                th:href="@{/emprestimos/lista}">↩ Devoluções</a><a class="nav-link" th:href="@{/usuarios}">♙
+                Usuários</a></nav>
+        <div class="sidebar-bottom">
+            <div class="profile-dot" th:text="${#strings.substring(session.usuarioNome,0,1).toUpperCase()}">U</div>
+            <div class="profile-text"><strong th:text="${session.usuarioNome}">Usuário</strong><small>Conta
+                    ativa</small></div>
+            <form th:action="@{/logout}" method="post"><button class="icon-button" aria-label="Sair">↪</button></form>
+        </div>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">CIRCULAÇÃO</p>
+                <h1>Empréstimos e devoluções</h1>
+                <p class="muted">Acompanhe os registros e confirme as devoluções.</p>
+            </div><a class="button button-primary" th:href="@{/emprestimos}">＋ Novo empréstimo</a>
+        </header>
+        <div class="alert alert-success" th:if="${sucesso}" th:text="${sucesso}" role="status"></div>
+        <div class="alert alert-error" th:if="${erro}" th:text="${erro}" role="alert"></div>
+        <section class="panel">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Livro / usuário</th>
+                            <th>Data do empréstimo</th>
+                            <th>Devolução prevista</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="e : ${emprestimos}">
+                            <td>
+                                <div class="table-book"><span class="book-mini">▤</span>
+                                    <div><strong th:text="${e.livro.titulo}">Livro</strong><small
+                                            th:text="${e.usuario.nome}">Usuário</small></div>
+                                </div>
+                            </td>
+                            <td th:text="${#temporals.format(e.dataEmprestimo,'dd/MM/yyyy')}">01/01/2026</td>
+                            <td th:text="${#temporals.format(e.dataDevolucao,'dd/MM/yyyy')}">15/01/2026</td>
+                            <td><span class="status-pill"
+                                    th:classappend="${e.status ? ' status-active' : ' status-done'}"
+                                    th:text="${e.status ? 'Em aberto' : 'Devolvido'}">Em aberto</span></td>
+                            <td>
+                                <form th:if="${e.status}" th:action="@{/emprestimos/{id}/devolver(id=${e.id})}"
+                                    method="post" onsubmit="return confirm('Confirmar a devolução deste livro?')">
+                                    <button class="small-action" type="submit">Registrar devolução</button></form><span
+                                    class="muted" th:unless="${e.status}">Concluído</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${emprestimos == null or emprestimos.isEmpty()}">
+                            <td colspan="5">
+                                <div class="empty-state"><span>↩</span><strong>Nenhum empréstimo registrado</strong>
+                                    <p>Quando um empréstimo for realizado, ele aparecerá nesta lista.</p><a
+                                        class="button button-primary" th:href="@{/emprestimos}">Registrar empréstimo</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-foot"><span th:text="${emprestimos.size() + ' registro(s)'}">0 registros</span><span>Prazo
+                    padrão: 14 dias</span></div>
+        </section>
+    </main>
+</body>
+
+</html>
